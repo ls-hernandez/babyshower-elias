@@ -163,9 +163,43 @@ textarea{resize:vertical;min-height:70px}
 @keyframes shn{60%,100%{transform:translateX(120%)}}
 .btn.play small{display:block;font:500 13px/1.25 "DM Sans",system-ui,sans-serif;margin-top:3px}
 @media(prefers-reduced-motion:reduce){.btn.play::after{animation:none}}
+
+/* ===== Entrada con video ===== */
+#intro{position:fixed;inset:0;z-index:100;display:flex;align-items:flex-start;justify-content:center;background:linear-gradient(#C9E1EB,#7E9D7E);transition:opacity .8s ease,visibility .8s;overflow:hidden;-webkit-tap-highlight-color:transparent}
+#intro.fuera{opacity:0;visibility:hidden;pointer-events:none}
+#intro video{display:block;width:100%;height:100%;object-fit:contain;background:transparent;transition:height .8s ease}
+#intro.fin video{height:calc(100% - 175px)}
+#i-ini{position:absolute;inset:0;border:0;padding:0;background:rgba(31,58,51,.18);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;font:inherit;transition:opacity .4s}
+#i-ini.off{opacity:0;pointer-events:none}
+#i-ini .pl{position:relative;width:92px;height:92px;border-radius:50%;background:#E4AA3C;display:grid;place-items:center;box-shadow:0 10px 30px rgba(31,58,51,.35)}
+#i-ini .pl::before{content:"";position:absolute;inset:-10px;border-radius:50%;border:3px solid rgba(228,170,60,.7);animation:ipu 1.8s ease-out infinite}
+#i-ini .pl svg{width:40px;height:40px;margin-left:5px;fill:#1F3B34}
+#i-ini .tx{background:#FFFDF8;color:#1F3B34;font:700 17px/1.2 "DM Sans",system-ui,sans-serif;padding:12px 22px;border-radius:99px;box-shadow:0 6px 18px rgba(31,58,51,.25)}
+@keyframes ipu{0%{transform:scale(.85);opacity:1}100%{transform:scale(1.5);opacity:0}}
+#i-top{position:absolute;left:12px;right:12px;top:calc(12px + env(safe-area-inset-top,0px));display:flex;justify-content:space-between;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s}
+#i-top.on{opacity:1;visibility:visible}
+#i-top button{pointer-events:auto;border:0;cursor:pointer;background:rgba(255,253,248,.88);color:#1F3B34;font:700 14px/1 "DM Sans",system-ui,sans-serif;height:40px;min-width:40px;padding:0 14px;border-radius:99px;box-shadow:0 3px 10px rgba(31,58,51,.2)}
+#i-fin{position:absolute;left:0;right:0;bottom:0;height:calc(175px + env(safe-area-inset-bottom,0px));padding:8px 24px calc(22px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;opacity:0;visibility:hidden;transform:translateY(24px);transition:opacity .7s,transform .7s,visibility .7s}
+#i-fin.on{opacity:1;visibility:visible;transform:none}
+#i-fin button{position:relative;overflow:hidden;border:0;cursor:pointer;width:min(360px,100%);min-height:62px;border-radius:18px;background:#E4AA3C;color:#1F3B34;font:700 18px/1.15 "DM Sans",system-ui,sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;animation:ibt 2.2s ease-in-out infinite}
+#i-fin button::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 35%,rgba(255,255,255,.55) 50%,transparent 65%);transform:translateX(-120%);animation:ish 3s ease-in-out infinite;pointer-events:none}
+#i-fin button svg{width:22px;height:22px;flex:none}
+#i-fin small{color:#F0E2C8;font:500 14px/1.3 "DM Sans",system-ui,sans-serif;text-align:center;max-width:300px}
+@keyframes ibt{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes ish{60%,100%{transform:translateX(120%)}}
+#intro button:focus-visible{outline:3px solid #FBF6EC;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){#i-ini .pl::before,#i-fin button,#i-fin button::after{animation:none}#intro,#i-fin{transition:none}}
 </style>
 </head>
 <body>
+<div id="intro" role="dialog" aria-label="Video de invitación al baby shower de Elías Antonio">
+ <video id="i-v" src="video-invitacion.mp4" poster="poster.jpg" playsinline webkit-playsinline preload="auto" disablepictureinpicture></video>
+ <button id="i-ini" type="button" aria-label="Reproducir el video de la invitación"><span class="pl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg></span><span class="tx">Toca para ver la invitación</span></button>
+ <div id="i-top"><button id="i-snd" type="button" aria-label="Silenciar">🔊</button><button id="i-skip" type="button">Saltar ›</button></div>
+ <div id="i-fin"><button id="i-go" type="button"><span>Ver la invitación</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><small>Confirma tu asistencia y participa por un premio</small></div>
+</div>
+<noscript><style>#intro{display:none}</style></noscript>
+
 <main>
  <svg class="bunt" id="bunt" viewBox="0 0 480 70" aria-hidden="true"></svg>
  <p class="eyebrow">BABY SHOWER</p>
@@ -600,6 +634,28 @@ $('snd').onclick=()=>{mute=!mute;$('snd').textContent=mute?'🔇':'🔊'};
 $('nk').addEventListener('keydown',e=>{if(e.key==='Enter')registrar(false)});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&G.classList.contains('on'))cerrar()});
 window.__g={st:()=>({est,ct,puntos,v:Math.round(v),h:bb.h,obst:obst.map(o=>({x:o.x,w:o.w,h:o.h,t:o.t})),S,W,H,GY,BX})};
+})();
+</script>
+<script>
+/* ===== Entrada con video ===== */
+(function(){
+ const I=document.getElementById('intro'),V=document.getElementById('i-v'),ini=document.getElementById('i-ini'),top=document.getElementById('i-top'),fin=document.getElementById('i-fin'),snd=document.getElementById('i-snd'),M=document.querySelector('main');
+ let listo=false,timer=0;
+ const cv=document.createElement('canvas');cv.width=16;cv.height=32;const cx=cv.getContext('2d',{willReadFrequently:true});
+ function color(){try{cx.drawImage(V,0,0,16,32);const a=cx.getImageData(0,0,1,1).data,b=cx.getImageData(0,31,1,1).data;I.style.background='linear-gradient(rgb('+a[0]+','+a[1]+','+a[2]+'),rgb('+b[0]+','+b[1]+','+b[2]+'))'}catch(e){clearInterval(timer)}}
+ function entrar(){if(listo)return;listo=true;clearInterval(timer);try{V.pause()}catch(e){}
+  I.classList.add('fuera');document.body.style.overflow='';M.removeAttribute('inert');M.removeAttribute('aria-hidden');
+  setTimeout(()=>{I.style.display='none';V.removeAttribute('src');V.load()},900);window.scrollTo(0,0)}
+ if(location.hash==='#invitacion'){I.style.display='none';return}
+ document.body.style.overflow='hidden';M.setAttribute('inert','');M.setAttribute('aria-hidden','true');
+ function terminar(){clearInterval(timer);I.classList.add('fin');top.classList.remove('on');fin.classList.add('on')}
+ ini.onclick=async()=>{ini.classList.add('off');top.classList.add('on');
+  try{await V.play()}catch(e){try{V.muted=true;snd.textContent='🔇';await V.play()}catch(e2){entrar();return}}
+  clearInterval(timer);timer=setInterval(color,200)};
+ V.addEventListener('ended',terminar);V.addEventListener('error',entrar);if(V.error)entrar();
+ snd.onclick=()=>{V.muted=!V.muted;snd.textContent=V.muted?'🔇':'🔊';snd.setAttribute('aria-label',V.muted?'Activar sonido':'Silenciar')};
+ document.getElementById('i-skip').onclick=entrar;document.getElementById('i-go').onclick=entrar;
+ ini.focus({preventScroll:true});
 })();
 </script>
 </body>
